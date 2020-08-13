@@ -1,10 +1,11 @@
 <template>
   <div id="app">
-    <header class="flex justify-center w-full bg-blue-700 h-16">
+    <header class="sticky top-0 flex justify-center w-full bg-blue-700 h-16 z-50">
       <nav class="w-full max-w-screen-md flex justify-between items-center px-4">
         <h1 class="text-2xl font-semibold text-white">RaidTime</h1>
         <ul>
-          <li v-if="Object.keys(userProfile).length > 0">
+          <!-- <li v-if="userProfile"> -->
+          <li>
             <button type="button" class="text-white font-semibold" @click="signOut">
               Sign Out
             </button>
@@ -17,19 +18,15 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapState, mapActions } from 'vuex';
 
 export default {
   name: 'App',
   computed: {
-    ...mapState({
-      userProfile: 'userProfile'
-    })
+    ...mapState(['userProfile'])
   },
   methods: {
-    signOut() {
-      this.$store.dispatch('signOut');
-    }
+    ...mapActions(['signOut'])
   }
 };
 </script>

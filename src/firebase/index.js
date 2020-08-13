@@ -20,4 +20,18 @@ export const auth = firebase.auth();
 export const groupsCollection = db.collection('groups');
 export const usersCollection = db.collection('users');
 
+const googleProvider = new firebase.auth.GoogleAuthProvider();
+
+googleProvider.setCustomParameters({ prompt: 'select_account' });
+
+export const signInWithGoogle = async () => {
+  try {
+    const { user } = await auth.signInWithPopup(googleProvider);
+
+    return user;
+  } catch (err) {
+    console.error(err);
+  }
+};
+
 export default firebase;

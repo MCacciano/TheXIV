@@ -1,52 +1,80 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import { auth, usersCollection } from '../firebase';
+
+import { auth, signInWithGoogle, usersCollection } from '../firebase';
 import router from '../router';
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    userProfile: {}
+    userProfile: null
   },
   mutations: {
     setUserProfile: (state, val) => (state.userProfile = val)
   },
   actions: {
     async login({ dispatch }, { email, password }) {
-      // sign user in
-      const { user } = await auth.signInWithEmailAndPassword(email, password);
+      try {
+        // sign user in
+        const { user } = await auth.signInWithEmailAndPassword(email, password);
 
-      // fetch user profile and set in state
-      dispatch('fetchUserProfile', user);
+        // fetch user profile and set in state
+        dispatch('fetchUserProfile', user);
+      } catch (err) {
+        console.error(err);
+      }
+    },
+    async loginWithGoogle({ dispatch }) {
+      try {
+        const user = await signInWithGoogle();
+
+        console.log('loginWithGoogle action', user);
+
+        dispatch('fetchUserProfile', user);
+      } catch (err) {
+        console.error(err);
+      }
     },
     async signUp({ dispatch }, { email, password, displayName }) {
-      // sign user up
-      const { user } = await auth.createUserWithEmailAndPassword(email, password);
+      try {
+        // sign user up
+        const { user } = await auth.createUserWithEmailAndPassword(email, password);
 
-      // add user to the db
-      await usersCollection
-        .doc(user.uid)
-        .set({ email, displayName, createdAt: Date.now().toLocaleString() });
+        // add user to the db
+        await usersCollection
+          .doc(user.uid)
+          .set({ email, displayName, createdAt: Date.now().toLocaleString() });
 
-      // fetch user profile and set in state
-      dispatch('fetchUserProfile', user);
+        // fetch user profile and set in state
+        dispatch('fetchUserProfile', user);
+      } catch (err) {
+        console.error(err);
+      }
     },
     async signOut({ commit }) {
-      auth.signOut();
+      try {
+        await auth.signOut();
 
-      commit('setUserProfile', {});
-      router.push('/login');
+        commit('setUserProfile', null);
+        router.push('/login');
+      } catch (err) {
+        console.error(err);
+      }
     },
     async fetchUserProfile({ commit }, user) {
-      // fetch user profile
-      const userProfile = await usersCollection.doc(user.uid).get();
+      try {
+        // fetch user profile
+        const userProfile = await usersCollection.doc(user.uid).get();
 
-      // set user profile in state
-      commit('setUserProfile', userProfile.data());
+        // set user profile in state
+        commit('setUserProfile', userProfile.data());
 
-      // route to dashboard
-      router.push('/');
+        // route to dashboard
+        router.push('/');
+      } catch (err) {
+        console.error(err);
+      }
     }
   },
   modules: {}

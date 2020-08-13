@@ -1,5 +1,5 @@
 <template>
-  <div class="w-screen h-screen flex justify-center items-center bg-gray-200">
+  <div style="margin-top: -4rem;" class="h-screen flex justify-center items-center bg-gray-200">
     <LoginForm
       v-if="showLoginForm"
       :loginForm="loginForm"
@@ -11,6 +11,9 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
+import { auth } from '@/firebase';
+
 import LoginForm from '@/components/LoginForm';
 import SignUpForm from '@/components/SignUpForm';
 
@@ -32,12 +35,13 @@ export default {
       password: ''
     }
   }),
+  computed: {
+    ...mapState({
+      userProfile: ({ userProfile }) => userProfile
+    })
+  },
   methods: {
     login() {
-      console.log({
-        email: this.loginForm.email,
-        password: this.loginForm.password
-      });
       this.$store.dispatch('login', {
         email: this.loginForm.email,
         password: this.loginForm.password

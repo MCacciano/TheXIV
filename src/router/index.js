@@ -1,7 +1,10 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import Dashboard from '../views/Dashboard.vue';
+
 import { auth } from '../firebase';
+
+import Dashboard from '../views/Dashboard.vue';
+import Login from '../views/Login.vue';
 
 Vue.use(VueRouter);
 
@@ -17,7 +20,7 @@ const routes = [
   {
     path: '/login',
     name: 'Login',
-    component: () => import(/* webpackChunkName: "login" */ '../views/Login.vue'),
+    component: Login,
     meta: {
       isLoginPage: true
     }
@@ -36,14 +39,14 @@ router.beforeEach((to, from, next) => {
 
   if (requiresAuth) {
     if (!auth.currentUser) {
-      next('/login');
+      next({ name: 'Login' });
     } else {
       next();
     }
   } else {
     if (isLoginPage) {
       if (auth.currentUser) {
-        next('/');
+        next({ name: 'Dashboard' });
       } else {
         next();
       }

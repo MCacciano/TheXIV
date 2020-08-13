@@ -13,12 +13,20 @@
       id="password"
       placeholder="Enter password"
     />
-    <button
-      class="border border-blue-700 text-blue-700 font-semibold hover:bg-blue-700 hover:text-white px-2 py-1 my-2 rounded shadow"
-      @click="login"
-    >
-      Log In
-    </button>
+    <div class="flex flex-col">
+      <button
+        class="border border-blue-700 text-blue-700 font-semibold hover:bg-blue-700 hover:text-white px-2 py-1 my-2 rounded shadow"
+        @click="login"
+      >
+        Log In
+      </button>
+      <button
+        class="border border-red-700 text-red-700 font-semibold hover:bg-red-700 hover:text-white px-2 py-1 my-2 rounded shadow"
+        @click="loginWithGoogle"
+      >
+        Log In With Google
+      </button>
+    </div>
     <div class="flex justify-between items-center my-2">
       <span>Alread have an account?</span>
       <a class="cursor-pointer text-sm font-thin text-blue-700" @click="toggleForm">
@@ -29,6 +37,8 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex';
+
 import TextInput from '@/components/TextInput';
 
 export default {
@@ -49,6 +59,9 @@ export default {
       type: Function,
       required: false
     }
+  },
+  methods: {
+    ...mapActions(['loginWithGoogle'])
   }
 };
 </script>
