@@ -24,14 +24,6 @@ const googleProvider = new firebase.auth.GoogleAuthProvider();
 
 googleProvider.setCustomParameters({ prompt: 'select_account' });
 
-export const signInWithGoogle = async () => {
-  try {
-    const { user } = await auth.signInWithPopup(googleProvider);
-
-    return user;
-  } catch (err) {
-    console.error(err);
-  }
-};
+export const signInWithGoogle = () => auth.signInWithPopup(googleProvider);
 
 export default firebase;

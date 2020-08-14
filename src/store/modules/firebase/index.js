@@ -24,13 +24,19 @@ export default {
   },
   mutations: {
     setUserProfile: (state, val) => (state.userProfile = val),
-    setShowLoginForm: (state, val) => (state.showLoginForm = val)
+    setShowLoginForm: (state, val) => (state.showLoginForm = val),
+    clearLoginAndSignUp: state => {
+      Object.keys(state.loginForm).forEach(key => (state.loginForm[key] = ''));
+      Object.keys(state.signUpForm).forEach(key => (state.signUpForm[key] = ''));
+    }
   },
   actions: {
-    async login({ dispatch }, { email, password }) {
+    async login({ dispatch, commit }, { email, password }) {
       try {
         // sign user in
         const { user } = await auth.signInWithEmailAndPassword(email, password);
+
+        commit('clearLoginAndSignUp');
 
         // fetch user profile and set in state
         dispatch('fetchUserProfile', user);
@@ -38,19 +44,20 @@ export default {
         console.error(err);
       }
     },
-    async loginWithGoogle({ dispatch }) {
-      try {
-        const { displayName, email, uid } = await signInWithGoogle();
-        const user = {
-          uid,
-          email,
-          displayName
-        };
+    async loginWithGoogle({ dispatch, commit }) {
+      const {
+        user: { displayName, email, uid }
+      } = await signInWithGoogle();
 
-        dispatch('fetchUserProfile', user);
-      } catch (err) {
-        console.error(err);
-      }
+      const googleUser = {
+        displayName,
+        email,
+        uid
+      };
+
+      commit('clearLoginAndSignUp');
+
+      dispatch('fetchUserProfile', googleUser);
     },
     async signUp({ dispatch }, { email, password, displayName }) {
       try {
@@ -60,13 +67,15 @@ export default {
         // add user to the db
         await usersCollection.doc(user.uid).set({ email, displayName, createdAt: Date.now() });
 
+        commit('clearLoginAndSignUp');
+
         // fetch user profile and set in state
         dispatch('fetchUserProfile', user);
       } catch (err) {
         console.error(err);
       }
     },
-    async signOut({ commit }) {
+    async logout({ commit }) {
       try {
         await auth.signOut();
         commit('setUserProfile', null);

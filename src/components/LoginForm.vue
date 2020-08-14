@@ -8,6 +8,7 @@
     </div>
     <TextInput label="Email" v-model.trim="loginForm.email" id="email" placeholder="Enter email" />
     <TextInput
+      type="password"
       label="Password"
       v-model.trim="loginForm.password"
       id="password"

@@ -11,8 +11,8 @@
             <router-link to="/">{{ userProfile.displayName || userProfile.email }}</router-link>
           </li>
           <li class=" px-2">
-            <button type="button" class="text-white font-medium text-lg" @click="signOut">
-              Sign Out
+            <button type="button" class="text-white font-medium text-lg" @click="logout">
+              Logout
             </button>
           </li>
         </template>
@@ -50,7 +50,7 @@ export default {
     ...mapGetters('firebase', ['userProfile'])
   },
   methods: {
-    ...mapActions('firebase', ['signOut'])
+    ...mapActions('firebase', ['logout'])
   }
 };
 </script>

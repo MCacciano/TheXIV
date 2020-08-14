@@ -19,6 +19,7 @@
       placeholder="Enter email"
     />
     <TextInput
+      type="password"
       label="Password"
       v-model.trim="signUpForm.password"
       id="password2"

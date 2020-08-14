@@ -3,7 +3,7 @@
     <span class="mb-1 text-sm font-semibold">{{ label }}</span>
     <input
       @input="$emit('input', $event.target.value)"
-      type="text"
+      :type="type"
       :value="value"
       :id="id"
       :placeholder="placeholder"
@@ -16,6 +16,11 @@
 export default {
   name: 'CustomInput',
   props: {
+    type: {
+      type: String,
+      required: false,
+      default: 'text'
+    },
     label: {
       type: String,
       required: false,
