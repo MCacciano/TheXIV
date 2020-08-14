@@ -1,6 +1,6 @@
 <template>
   <form
-    class="flex flex-col w-full max-w-md bg-white border border-gray-500 rounded shadow p-4"
+    class="flex flex-col w-full max-w-md bg-white border border-gray-500 rounded shadow p-4 mx-2"
     @submit.prevent
   >
     <div class="flex justify-center">
