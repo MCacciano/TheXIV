@@ -40,7 +40,12 @@ export default {
     },
     async loginWithGoogle({ dispatch }) {
       try {
-        const user = await signInWithGoogle();
+        const { displayName, email, uid } = await signInWithGoogle();
+        const user = {
+          uid,
+          email,
+          displayName
+        };
 
         dispatch('fetchUserProfile', user);
       } catch (err) {
@@ -53,9 +58,7 @@ export default {
         const { user } = await auth.createUserWithEmailAndPassword(email, password);
 
         // add user to the db
-        await usersCollection
-          .doc(user.uid)
-          .set({ email, displayName, createdAt: Date.now().toLocaleString() });
+        await usersCollection.doc(user.uid).set({ email, displayName, createdAt: Date.now() });
 
         // fetch user profile and set in state
         dispatch('fetchUserProfile', user);
@@ -66,8 +69,8 @@ export default {
     async signOut({ commit }) {
       try {
         await auth.signOut();
-
         commit('setUserProfile', null);
+
         router.push('/login');
       } catch (err) {
         console.error(err);
@@ -75,11 +78,15 @@ export default {
     },
     async fetchUserProfile({ commit }, user) {
       try {
-        // fetch user profile
-        const userProfile = await usersCollection.doc(user.uid).get();
+        if (user) {
+          // fetch user profile
+          const userProfile = await usersCollection.doc(user.uid).get();
 
-        // set user profile in state
-        commit('setUserProfile', userProfile.data());
+          // set user profile in state
+          commit('setUserProfile', userProfile.data());
+        } else {
+          commit('setUserProfile', null);
+        }
 
         // route to dashboard
         router.push('/');

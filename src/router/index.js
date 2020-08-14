@@ -37,6 +37,8 @@ router.beforeEach((to, from, next) => {
   const requiresAuth = to.matched.some(x => x.meta.requiresAuth);
   const isLoginPage = to.matched.some(x => x.meta.isLoginPage);
 
+  console.log({ to, from });
+
   if (requiresAuth) {
     if (!auth.currentUser) {
       next({ name: 'Login' });

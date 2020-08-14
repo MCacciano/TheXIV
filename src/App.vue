@@ -1,31 +1,17 @@
 <template>
   <div id="app">
-    <header class="sticky top-0 flex justify-center w-full bg-blue-700 h-16 z-50">
-      <nav class="w-full max-w-screen-md flex justify-between items-center px-4">
-        <h1 class="text-2xl font-semibold text-white">RaidTime</h1>
-        <ul>
-          <li v-if="userProfile">
-            <button type="button" class="text-white font-semibold" @click="signOut">
-              Sign Out
-            </button>
-          </li>
-        </ul>
-      </nav>
-    </header>
+    <AppHeader />
     <router-view />
   </div>
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex';
+import AppHeader from '@/components/AppHeader';
 
 export default {
   name: 'App',
-  computed: {
-    ...mapState('firebase', ['userProfile'])
-  },
-  methods: {
-    ...mapActions('firebase', ['signOut'])
+  components: {
+    AppHeader
   }
 };
 </script>

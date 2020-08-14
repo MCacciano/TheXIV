@@ -24,15 +24,24 @@
       id="password2"
       placeholder="Enter password"
     />
-    <button
-      class="border border-blue-700 text-blue-700 font-semibold hover:bg-blue-700 hover:text-white px-2 py-1 my-2 rounded shadow"
-      @click="signUp(signUpForm)"
-    >
-      Sign Up
-    </button>
+    <div class="flex flex-col">
+      <button
+        class="border border-blue-700 text-blue-700 font-semibold hover:bg-blue-700 hover:text-white px-2 py-1 my-2 rounded shadow"
+        @click="signUp(signUpForm)"
+      >
+        Sign Up
+      </button>
+      <button
+        class="border border-red-700 text-red-700 font-semibold hover:bg-red-700 hover:text-white px-2 py-1 my-2 rounded shadow"
+        @click="loginWithGoogle"
+      >
+        Sign Up With Google
+      </button>
+    </div>
+
     <div class="flex justify-between items-center my-2">
       Alread have an account?
-      <a class="cursor-pointer text-sm font-thin text-blue-700" @click="toggleForm">
+      <a class="cursor-pointer text-sm font-semibold text-blue-700" @click="toggleForm">
         Log In
       </a>
     </div>
@@ -53,7 +62,7 @@ export default {
     ...mapGetters('firebase', ['signUpForm'])
   },
   methods: {
-    ...mapActions('firebase', ['toggleForm', 'signUp'])
+    ...mapActions('firebase', ['toggleForm', 'signUp', 'loginWithGoogle'])
   }
 };
 </script>

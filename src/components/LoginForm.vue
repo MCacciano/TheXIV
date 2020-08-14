@@ -28,9 +28,9 @@
       </button>
     </div>
     <div class="flex justify-between items-center my-2">
-      <span>Alread have an account?</span>
-      <a class="cursor-pointer text-sm font-thin text-blue-700" @click="toggleForm">
-        Create an Account
+      <span>Need an account?</span>
+      <a class="cursor-pointer text-sm font-light text-blue-700" @click="toggleForm">
+        Sign Up
       </a>
     </div>
   </form>
