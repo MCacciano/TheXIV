@@ -16,7 +16,7 @@
     <div class="flex flex-col">
       <button
         class="border border-blue-700 text-blue-700 font-semibold hover:bg-blue-700 hover:text-white px-2 py-1 my-2 rounded shadow"
-        @click="login"
+        @click="login(loginForm)"
       >
         Log In
       </button>
@@ -37,7 +37,7 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 
 import TextInput from '@/components/TextInput';
 
@@ -46,22 +46,11 @@ export default {
   components: {
     TextInput
   },
-  props: {
-    loginForm: {
-      type: Object,
-      required: false
-    },
-    login: {
-      type: Function,
-      required: false
-    },
-    toggleForm: {
-      type: Function,
-      required: false
-    }
+  computed: {
+    ...mapGetters('firebase', ['loginForm'])
   },
   methods: {
-    ...mapActions(['loginWithGoogle'])
+    ...mapActions('firebase', ['loginWithGoogle', 'toggleForm', 'login'])
   }
 };
 </script>

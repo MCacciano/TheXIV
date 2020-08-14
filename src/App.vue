@@ -4,8 +4,7 @@
       <nav class="w-full max-w-screen-md flex justify-between items-center px-4">
         <h1 class="text-2xl font-semibold text-white">RaidTime</h1>
         <ul>
-          <!-- <li v-if="userProfile"> -->
-          <li>
+          <li v-if="userProfile">
             <button type="button" class="text-white font-semibold" @click="signOut">
               Sign Out
             </button>
@@ -23,10 +22,10 @@ import { mapState, mapActions } from 'vuex';
 export default {
   name: 'App',
   computed: {
-    ...mapState(['userProfile'])
+    ...mapState('firebase', ['userProfile'])
   },
   methods: {
-    ...mapActions(['signOut'])
+    ...mapActions('firebase', ['signOut'])
   }
 };
 </script>

@@ -26,7 +26,7 @@
     />
     <button
       class="border border-blue-700 text-blue-700 font-semibold hover:bg-blue-700 hover:text-white px-2 py-1 my-2 rounded shadow"
-      @click="signUp"
+      @click="signUp(signUpForm)"
     >
       Sign Up
     </button>
@@ -40,6 +40,8 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex';
+
 import TextInput from '@/components/TextInput';
 
 export default {
@@ -47,19 +49,11 @@ export default {
   components: {
     TextInput
   },
-  props: {
-    signUpForm: {
-      type: Object,
-      required: false
-    },
-    signUp: {
-      type: Function,
-      required: false
-    },
-    toggleForm: {
-      type: Function,
-      required: false
-    }
+  computed: {
+    ...mapGetters('firebase', ['signUpForm'])
+  },
+  methods: {
+    ...mapActions('firebase', ['toggleForm', 'signUp'])
   }
 };
 </script>

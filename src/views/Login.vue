@@ -1,17 +1,12 @@
 <template>
   <div style="margin-top: -4rem;" class="h-screen flex justify-center items-center bg-gray-200">
-    <LoginForm
-      v-if="showLoginForm"
-      :loginForm="loginForm"
-      :login="login"
-      :toggleForm="toggleForm"
-    />
-    <SignUpForm v-else :signUpForm="signUpForm" :signUp="signUp" :toggleForm="toggleForm" />
+    <LoginForm v-if="showLoginForm" />
+    <SignUpForm v-else />
   </div>
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapGetters } from 'vuex';
 import { auth } from '@/firebase';
 
 import LoginForm from '@/components/LoginForm';
@@ -23,40 +18,8 @@ export default {
     LoginForm,
     SignUpForm
   },
-  data: () => ({
-    showLoginForm: true,
-    loginForm: {
-      email: '',
-      password: ''
-    },
-    signUpForm: {
-      displayName: '',
-      email: '',
-      password: ''
-    }
-  }),
   computed: {
-    ...mapState({
-      userProfile: ({ userProfile }) => userProfile
-    })
-  },
-  methods: {
-    login() {
-      this.$store.dispatch('login', {
-        email: this.loginForm.email,
-        password: this.loginForm.password
-      });
-    },
-    signUp() {
-      this.$store.dispatch('signUp', {
-        email: this.signUpForm.email,
-        password: this.signUpForm.password,
-        displayName: this.signUpForm.displayName
-      });
-    },
-    toggleForm() {
-      this.showLoginForm = !this.showLoginForm;
-    }
+    ...mapGetters('firebase', ['userProfile', 'showLoginForm'])
   }
 };
 </script>
