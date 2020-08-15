@@ -2,8 +2,7 @@
   <nav
     class="fixed bottom-0 w-full bg-blue-800 border-t border-black md:h-full md:min-h-screen md:w-32 md:border-r z-50"
   >
-    <ul class="grid grid-cols-9 md:flex md:flex-col md:h-full content-start">
-      <!-- <ul class="flex justify-evenly md:flex-col md:justify-start md:h-full"> -->
+    <ul class="flex md:flex-col md:h-full content-start">
       <li class="hidden md:block">
         <router-link
           id="logo"
@@ -15,19 +14,19 @@
           <span class="font-semibold text-red-700">XIV</span>
         </router-link>
       </li>
-      <li v-for="(link, i) in links" :key="i" class="col-span-2">
+      <li v-for="(link, i) in links" :key="i" class="flex-1 md:flex-none">
         <router-link
           :to="link.to"
-          class="flex justify-center items-center h-full md:border-b border-black text-white hover:bg-white hover:text-gray-500"
+          class="relative flex justify-center items-center h-full md:border-b border-black text-white hover:bg-white hover:text-gray-500"
           :class="[
             link.to !== '/' ? 'md:py-4 border-l md:border-l-0' : '',
             currentPage.includes(link.to) ? 'text-blue-800' : ''
           ]"
         >
           <img
-            :src="require('@/assets/images/default-user.png')"
-            v-if="link.image"
-            class="w-12 h-12 m-1 object-fit rounded-full fill-current md:w-18 md:h-18"
+            :src="character.portrait"
+            v-if="!link.icon"
+            class="w-16 h-16 p-1 rounded-full md:p-0 md:rounded-none md:w-full md:h-auto object-cover"
           />
           <fa-icon :icon="link.icon" size="2x" class="fill-current col-span-2" v-else />
         </router-link>
@@ -47,7 +46,7 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 
 export default {
   name: 'Navigation',
@@ -80,15 +79,21 @@ export default {
     };
   },
   computed: {
+    ...mapGetters('xivapi', ['character']),
     currentPage() {
-      return this.$route.fullPath;
+      return this.$route.path;
     },
     isDashboard() {
       return this.$route.name.toLowerCase() === 'dashboard';
     }
   },
   methods: {
-    ...mapActions('firebase', ['logout'])
+    ...mapActions('firebase', ['logout']),
+    ...mapActions('xivapi', ['fetchCharacterById'])
+  },
+  created() {
+    this.fetchCharacterById('7611347');
+    this.links[0].image = this.character.portrait;
   }
 };
 </script>

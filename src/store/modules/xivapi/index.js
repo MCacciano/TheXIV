@@ -9,13 +9,18 @@ const xiv = new XIVAPI({
 export default {
   namespaced: true,
   state: {
-    mounts: []
+    mounts: [],
+    character: {
+      portrait: require('@/assets/images/default-user.png')
+    }
   },
   getters: {
-    mounts: ({ mounts }) => mounts
+    mounts: ({ mounts }) => mounts,
+    character: ({ character }) => character
   },
   mutations: {
-    setMounts: (state, mounts) => (state.mounts = mounts)
+    setMounts: (state, mounts) => (state.mounts = mounts),
+    setCharacter: (state, character) => (state.character = character)
   },
   actions: {
     async fetchMounts({ commit }) {
@@ -25,6 +30,16 @@ export default {
         console.log('mounts :>> ', mounts);
 
         commit('setMounts', mounts);
+      } catch (err) {
+        console.error(err);
+      }
+    },
+    async fetchCharacterById({ commit }, id) {
+      try {
+        const { character } = await xiv.character.get(id);
+        console.log('character', character);
+
+        commit('setCharacter', character);
       } catch (err) {
         console.error(err);
       }
