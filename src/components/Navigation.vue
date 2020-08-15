@@ -32,7 +32,7 @@
       <li class="md:mt-auto md:h-10">
         <button
           type="button"
-          class="flex items-center justify-center h-full w-full px-2 text-white font-light border-l md:border-none md:border-t border-black"
+          class="flex items-center justify-center h-full w-full px-2 text-white font-light border-l md:border-l-0 md:border-t border-black"
           to="/"
           @click="logout"
         >
