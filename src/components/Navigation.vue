@@ -32,7 +32,7 @@
       <li class="md:mt-auto md:h-10">
         <button
           type="button"
-          class="flex items-center justify-center h-full w-full px-2 text-white font-light border-l md:border-t border-black"
+          class="flex items-center justify-center h-full w-full px-2 text-white font-light border-l md:border-none md:border-t border-black"
           to="/"
           @click="logout"
         >
@@ -50,10 +50,12 @@ export default {
   name: 'Navigation',
   data() {
     return {
+      // TODO: currently "/" goes to Dashboard. This needs to be changed to handle multiple users
+      // TODO: something like "/dashboard/:userId"
       links: [
         {
           name: 'dashboard',
-          to: '/dashboard',
+          to: '/',
           icon: 'id-card'
         },
         {
