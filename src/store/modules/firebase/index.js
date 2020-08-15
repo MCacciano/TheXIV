@@ -45,30 +45,42 @@ export default {
       }
     },
     async loginWithGoogle({ dispatch, commit }) {
-      const {
-        user: { displayName, email, uid }
-      } = await signInWithGoogle();
+      const { user } = await signInWithGoogle();
+      const { displayName, email, uid } = user;
+
+      const userProfile = await usersCollection.doc(user.uid).get();
 
       const googleUser = {
         displayName,
         email,
-        uid
+        uid,
+        createdAt: new Date(Date.now())
       };
+
+      if (!userProfile.data()) {
+        await usersCollection.doc(user.uid).set(googleUser);
+      }
 
       commit('clearLoginAndSignUp');
 
       dispatch('fetchUserProfile', googleUser);
     },
-    async signUp({ dispatch }, { email, password, displayName }) {
+    async signUp({ dispatch, commit }, { email, password, displayName }) {
       try {
         // sign user up
         const { user } = await auth.createUserWithEmailAndPassword(email, password);
+        const userProfile = await usersCollection.doc(user.uid).get();
 
-        // add user to the db
-        await usersCollection.doc(user.uid).set({ email, displayName, createdAt: Date.now() });
+        console.log('userProfile :>> ', userProfile);
+
+        if (!userProfile.data()) {
+          // add user to the db
+          await usersCollection
+            .doc(user.uid)
+            .set({ email, displayName, createdAt: new Date(Date.now()) });
+        }
 
         commit('clearLoginAndSignUp');
-
         // fetch user profile and set in state
         dispatch('fetchUserProfile', user);
       } catch (err) {
