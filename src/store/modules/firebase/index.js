@@ -57,13 +57,12 @@ export default {
         createdAt: new Date(Date.now())
       };
 
-      if (!userProfile.data()) {
+      if (!userProfile.exists) {
         await usersCollection.doc(user.uid).set(googleUser);
       }
 
-      commit('clearLoginAndSignUp');
-
       dispatch('fetchUserProfile', googleUser);
+      commit('clearLoginAndSignUp');
     },
     async signUp({ dispatch, commit }, { email, password, displayName }) {
       try {
@@ -73,7 +72,7 @@ export default {
 
         console.log('userProfile :>> ', userProfile);
 
-        if (!userProfile.data()) {
+        if (!userProfile.exists) {
           // add user to the db
           await usersCollection
             .doc(user.uid)

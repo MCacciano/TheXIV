@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import { library } from '@fortawesome/fontawesome-svg-core';
-import { faColumns, faHorse, faIdCard, faJedi } from '@fortawesome/free-solid-svg-icons';
+import { faColumns, faHorse, faIdCard, faUsers } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
 import App from './App.vue';
@@ -11,7 +11,7 @@ import { auth } from './firebase';
 
 import '@/assets/css/tailwind.css';
 
-library.add(faColumns, faHorse, faIdCard, faJedi);
+library.add(faColumns, faHorse, faIdCard, faUsers);
 
 Vue.component('fa-icon', FontAwesomeIcon);
 
