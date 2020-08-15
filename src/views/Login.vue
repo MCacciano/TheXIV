@@ -1,5 +1,5 @@
 <template>
-  <div style="margin-top: -4rem;" class="h-screen flex justify-center items-center bg-gray-200">
+  <div class="h-screen flex justify-center items-center bg-gray-200">
     <LoginForm v-if="showLoginForm" />
     <SignUpForm v-else />
   </div>
