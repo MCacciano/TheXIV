@@ -36,16 +36,7 @@ import { mapGetters, mapActions } from 'vuex';
 
 export default {
   name: 'AppHeader',
-  created() {
-    // without this userProfile is null when refreshing the page
-    auth.onAuthStateChanged(authUser => {
-      if (authUser) {
-        this.$store.commit('firebase/setUserProfile', authUser);
-      } else {
-        this.$store.commit('firebase/setUserProfile', null);
-      }
-    });
-  },
+
   computed: {
     ...mapGetters('firebase', ['userProfile'])
   },
