@@ -1,7 +1,10 @@
 <template>
   <div>
     <h1>Dashboard</h1>
-    <form class="flex justify-between border rounded p-1 border-gray-500" @sumbit.prevent>
+    <form
+      class="grid gap-2 md:flex justify-between border rounded p-1 border-gray-500"
+      @sumbit.prevent
+    >
       <label for="forename">
         Forename
         <input v-model="forename" id="forename" class="bg-gray-200 p-1 focus:bg-white" />
