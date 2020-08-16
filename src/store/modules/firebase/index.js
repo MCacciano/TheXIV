@@ -4,7 +4,20 @@ import router from '../../../router';
 export default {
   namespaced: true,
   state: {
-    userProfile: null,
+    userProfile: {
+      displayName: '',
+      email: '',
+      createdAt: null,
+      character: {
+        achievements: [],
+        profile: {
+          portrait: require('@/assets/images/default-user.png')
+        },
+        freeCompany: {},
+        minions: [],
+        mounts: []
+      }
+    },
     showLoginForm: true,
     loginForm: {
       email: '',
@@ -31,6 +44,9 @@ export default {
     }
   },
   actions: {
+    async setUserProfile({ commit }, user) {
+      commit('setUserProfile', user);
+    },
     async login({ dispatch, commit }, { email, password }) {
       try {
         // sign user in
@@ -107,6 +123,8 @@ export default {
         } else {
           commit('setUserProfile', null);
         }
+
+        if (router.currentRoute.path === '/') return;
 
         // route to dashboard
         router.push('/');

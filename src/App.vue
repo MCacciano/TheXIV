@@ -25,9 +25,9 @@ export default {
     // without this userProfile is null when refreshing the page
     auth.onAuthStateChanged(authUser => {
       if (authUser) {
-        this.$store.commit('firebase/setUserProfile', authUser);
+        this.$store.dispatch('firebase/fetchUserProfile', authUser);
       } else {
-        this.$store.commit('firebase/setUserProfile', null);
+        this.$store.dispatch('firebase/setUserProfile', null);
       }
     });
   }

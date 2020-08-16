@@ -24,7 +24,7 @@
           ]"
         >
           <img
-            :src="character.portrait"
+            :src="userProfile.character.profile.portrait"
             v-if="!link.icon"
             class="w-16 h-16 p-1 rounded-full md:p-0 md:rounded-none md:w-full md:h-auto object-cover"
           />
@@ -58,7 +58,7 @@ export default {
         {
           name: 'dashboard',
           to: '/',
-          image: '../assets/images/default-user.png'
+          image: ''
         },
         {
           name: 'mounts',
@@ -80,6 +80,7 @@ export default {
   },
   computed: {
     ...mapGetters('xivapi', ['character']),
+    ...mapGetters('firebase', ['userProfile']),
     currentPage() {
       return this.$route.path;
     },
@@ -90,10 +91,6 @@ export default {
   methods: {
     ...mapActions('firebase', ['logout']),
     ...mapActions('xivapi', ['fetchCharacterById'])
-  },
-  created() {
-    this.fetchCharacterById('7611347');
-    this.links[0].image = this.character.portrait;
   }
 };
 </script>
