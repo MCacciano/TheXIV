@@ -7,17 +7,36 @@
     >
       <label for="forename">
         Forename
-        <input v-model="forename" id="forename" class="bg-gray-200 p-1 focus:bg-white" />
+        <input
+          v-model="forename"
+          id="forename"
+          class="bg-gray-200 p-1 focus:bg-white"
+        />
       </label>
       <label for="surname">
         Surname
-        <input v-model="surname" id="surname" class="bg-gray-200 p-1 focus:bg-white" />
+        <input
+          v-model="surname"
+          id="surname"
+          class="bg-gray-200 p-1 focus:bg-white"
+        />
       </label>
-      <select class="bg-gray-200 p-1 focus:bg-white" name="server" v-model="chosenServer">
+      <select
+        class="bg-gray-200 p-1 focus:bg-white"
+        name="server"
+        v-model="chosenServer"
+      >
         <option disabled value="">Server</option>
-        <option v-for="(server, i) in servers" :key="i" :value="server">
-          {{ server }}
-        </option>
+        <optgroup
+          v-for="(dataCenter, i) in dataCenterKeys"
+          :label="dataCenter"
+          :key="i"
+          style="text-transform: capitalize;"
+        >
+          <option v-for="server in dataCenters[dataCenter]" :key="server">
+            {{ server }}
+          </option>
+        </optgroup>
       </select>
       <button
         type="button"
@@ -47,25 +66,28 @@ export default {
       forename: '',
       surname: '',
       chosenServer: '',
-      results: []
+      results: [],
     };
   },
   computed: {
-    ...mapGetters('xivapi', ['servers']),
-    ...mapGetters('firebase', ['userProfile'])
+    ...mapGetters('xivapi', ['dataCenters', 'dataCenterKeys']),
+    ...mapGetters('firebase', ['userProfile']),
   },
   methods: {
-    ...mapActions('xivapi', ['fetchServers', 'validateCharacter']),
+    ...mapActions('xivapi', [
+      'fetchDataCentersAndServers',
+      'validateCharacter',
+    ]),
     handleOnSubmit(e) {
       this.validateCharacter({
         name: `${this.forename}+${this.surname}`,
-        server: this.chosenServer
+        server: this.chosenServer,
       });
-    }
+    },
   },
   created() {
-    this.fetchServers();
-  }
+    this.fetchDataCentersAndServers();
+  },
 };
 </script>
 
