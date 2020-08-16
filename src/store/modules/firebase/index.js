@@ -5,14 +5,13 @@ export default {
   namespaced: true,
   state: {
     userProfile: {
+      defaultPortrait: require('@/assets/images/default-user.png'),
       displayName: '',
       email: '',
       createdAt: null,
       character: {
         achievements: [],
-        profile: {
-          portrait: require('@/assets/images/default-user.png')
-        },
+        profile: {},
         freeCompany: {},
         minions: [],
         mounts: []

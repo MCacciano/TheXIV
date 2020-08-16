@@ -24,7 +24,11 @@
           ]"
         >
           <img
-            :src="userProfile.character.profile.portrait"
+            :src="
+              userProfile.character
+                ? userProfile.character.profile.portrait
+                : require('@/assets/images/default-user.png')
+            "
             v-if="!link.icon"
             class="w-16 h-16 p-1 rounded-full md:p-0 md:rounded-none md:w-full md:h-auto object-cover"
           />

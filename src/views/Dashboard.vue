@@ -24,7 +24,7 @@
         Submit
       </button>
     </form>
-    <div class="w-full">
+    <div class="w-full" v-if="userProfile.character">
       <ul class="flex flex-wrap">
         <li v-for="mount in userProfile.character.mounts" :key="mount.id">
           <img :src="mount.icon" />
