@@ -15,7 +15,7 @@
         </li>
       </ul>
     </div>
-    <modal :showModal="showModal" @close="showModal = false">
+    <modal :showModal="showModal" @close="showModal = false" v-if="!userProfile.character">
       <LinkAccountForm slot="body" />
     </modal>
   </div>
@@ -44,13 +44,7 @@ export default {
     ...mapGetters('firebase', ['userProfile'])
   },
   methods: {
-    ...mapActions('xivapi', ['fetchDataCentersAndServers', 'validateCharacter']),
-    handleOnSubmit(e) {
-      this.validateCharacter({
-        name: `${this.forename}+${this.surname}`,
-        server: this.chosenServer
-      });
-    }
+    ...mapActions('xivapi', ['fetchDataCentersAndServers'])
   },
   created() {
     this.fetchDataCentersAndServers();

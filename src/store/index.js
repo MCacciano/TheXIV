@@ -7,10 +7,20 @@ import xivapi from './modules/xivapi';
 Vue.use(Vuex);
 
 export default new Vuex.Store({
-  state: {},
-  getters: {},
-  mutations: {},
-  actions: {},
+  state: {
+    isLoading: false
+  },
+  getters: {
+    isLoading: ({ isLoading }) => isLoading
+  },
+  mutations: {
+    setIsLoading: (state, val) => (state.isLoading = val)
+  },
+  actions: {
+    setIsLoading({ commit }, isLoading) {
+      commit('setIsLoading', isLoading);
+    }
+  },
   modules: {
     xivapi,
     firebase

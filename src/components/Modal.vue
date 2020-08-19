@@ -18,7 +18,17 @@
 <script>
 export default {
   name: 'Modal',
-  props: ['showModal']
+  props: {
+    showModal: {
+      type: Boolean,
+      required: true,
+      default: false
+    },
+    overlayColor: {
+      type: String,
+      required: false
+    }
+  }
 };
 </script>
 

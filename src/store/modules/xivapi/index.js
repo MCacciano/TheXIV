@@ -59,11 +59,12 @@ export default {
       }
     },
     async validateCharacter({ commit, dispatch, state, rootState }, { name, server }) {
-      // const cachedCharacter = localStorage.getItem('xivCharacterProfile');
+      dispatch('setIsLoading', true, { root: true });
+
       const user = await usersCollection.doc(rootState.firebase.userProfile.uid).get();
 
-      console.log('user', user.data());
-
+      // ? not sure if we need this logic. validateCharacter runs on
+      // ? form submit so once data is stored in firebase the form would be used again
       if (user.data().character) {
         console.log('fetching character from firebase');
         const characterProfile = user.data().character;
@@ -74,17 +75,22 @@ export default {
           const { results } = await xiv.character.search(name, { server });
           const characterId = results[0].id;
 
-          const { character: profile, mounts, ...rest } = await xiv.character.get(characterId, {
-            extended: true,
-            data: 'AC,MIMO,CJ,FC,'
-          });
+          const { character: profile } = await xiv.character.get(characterId);
 
           // TODO: This is hard coded in my lodestone profile currently for testing purposes
           const isValid = profile.bio === user.data().characterLinkID;
 
-          if (!isValid) return;
+          if (!isValid) {
+            dispatch('setIsLoading', false, { root: true });
+            return;
+          }
 
-          const characterProfile = { profile, mounts, ...rest };
+          const extendedProfile = await xiv.character.get(characterId, {
+            extended: 1,
+            data: 'AC,MIMO,CJ,FC,'
+          });
+
+          const characterProfile = { profile, ...extendedProfile };
           await usersCollection.doc(rootState.firebase.userProfile.uid).set(
             {
               character: {
@@ -102,11 +108,11 @@ export default {
             { root: true }
           );
 
-          // localStorage.setItem('xivCharacterProfile', JSON.stringify(characterProfile));
-
           commit('setCharacter', characterProfile);
+          dispatch('setIsLoading', false, { root: true });
         } catch (err) {
           console.error(err);
+          dispatch('setIsLoading', false, { root: true });
         }
       }
     },
