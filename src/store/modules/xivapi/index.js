@@ -75,21 +75,21 @@ export default {
           const { results } = await xiv.character.search(name, { server });
           const characterId = results[0].id;
 
-          const { character: profile } = await xiv.character.get(characterId);
+          const { character: simpleProfile } = await xiv.character.get(characterId);
 
-          const isValid = profile.bio === user.data().characterLinkID;
+          const isValid = simpleProfile.bio === user.data().characterLinkID;
 
           if (!isValid) {
             dispatch('setIsLoading', false, { root: true });
             return;
           }
 
-          const extendedProfile = await xiv.character.get(characterId, {
+          const { character, ...extendedProfile } = await xiv.character.get(characterId, {
             extended: 1,
             data: 'AC,MIMO,CJ,FC,'
           });
 
-          const characterProfile = { profile, ...extendedProfile };
+          const characterProfile = { profile: character, ...extendedProfile };
           await usersCollection.doc(rootState.firebase.userProfile.uid).set(
             {
               character: {

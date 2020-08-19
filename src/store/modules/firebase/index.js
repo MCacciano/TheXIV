@@ -63,8 +63,9 @@ export default {
       await signInWithGoogle();
       dispatch('dashboardRedirect');
     },
-    async logout() {
+    async logout({ dispatch }) {
       await auth.signOut();
+      await dispatch('setUserProfile', null);
       router.push({ name: 'Login' });
     },
     toggleLoginForm({ commit, state }) {

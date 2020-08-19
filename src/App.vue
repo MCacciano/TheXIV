@@ -1,10 +1,15 @@
 <template>
-  <div class="relative min-h-screen">
-    <Navigation v-if="userProfile" />
-    <div :class="[userProfile ? 'px-10 py-5 md:pl-40 md:pr-10 h-0 min-h-screen' : '']">
-      <router-view />
+  <pre-loader v-if="!$route.meta.isLoginPage && !userLoaded" />
+  <transition name="user-loaded" v-else>
+    <div class="relative min-h-screen h-auto">
+      <Navigation v-show="!$route.meta.isLoginPage" />
+      <div :class="[userProfile ? 'px-10 py-5 mb-5 md:pl-40 md:pr-10 h-auto min-h-screen' : '']">
+        <transition name="route-change">
+          <router-view />
+        </transition>
+      </div>
     </div>
-  </div>
+  </transition>
 </template>
 
 <script>
@@ -20,7 +25,8 @@ export default {
   },
   data() {
     return {
-      unsub: null
+      unsub: null,
+      userLoaded: false
     };
   },
   computed: {
@@ -32,6 +38,8 @@ export default {
   created() {
     auth.onAuthStateChanged(async authUser => {
       if (authUser) {
+        this.userLoaded = true;
+
         try {
           const userRef = await createUserDocument(authUser);
 
@@ -54,11 +62,21 @@ export default {
 </script>
 
 <style lang="scss">
-*,
-*::before,
-*::after {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+.user-loaded-enter-active,
+.user-loaded-leave-active {
+  transition: opacity 0.5s;
+}
+.user-loaded-enter,
+.user-loaded-leave-to {
+  opacity: 0;
+}
+
+.route-change-enter-active,
+.route-change-leave-active {
+  transition: opacity 0.5s;
+}
+.route-change-enter,
+.route-change-leave-to {
+  opacity: 0;
 }
 </style>
