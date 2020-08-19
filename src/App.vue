@@ -35,7 +35,6 @@ export default {
         try {
           const userRef = await createUserDocument(authUser);
 
-          // await userRef.onSnapshot(snapShot => this.setUserProfile(snapShot.data()));
           await userRef.onSnapshot(snapShot => {
             if (snapShot.exists) {
               this.setUserProfile(snapShot.data());
