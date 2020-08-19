@@ -17,7 +17,7 @@
     <div class="flex flex-col">
       <button
         class="border border-blue-700 text-blue-700 font-semibold hover:bg-blue-700 hover:text-white px-2 py-1 my-2 rounded shadow"
-        @click="login(loginForm)"
+        @click="loginWithEmailAndPassword(loginForm)"
       >
         Log In
       </button>
@@ -30,7 +30,7 @@
     </div>
     <div class="flex justify-between items-center my-2">
       <span>Need an account?</span>
-      <a class="cursor-pointer text-sm font-light text-blue-700" @click="toggleForm">
+      <a class="cursor-pointer text-sm font-light text-blue-700" @click="toggleLoginForm">
         Sign Up
       </a>
     </div>
@@ -51,7 +51,7 @@ export default {
     ...mapGetters('firebase', ['loginForm'])
   },
   methods: {
-    ...mapActions('firebase', ['loginWithGoogle', 'toggleForm', 'login'])
+    ...mapActions('firebase', ['loginWithGoogle', 'toggleLoginForm', 'loginWithEmailAndPassword'])
   }
 };
 </script>

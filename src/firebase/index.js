@@ -14,11 +14,36 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 
-export const db = firebase.firestore();
+export const firestore = firebase.firestore();
 export const auth = firebase.auth();
 
-export const groupsCollection = db.collection('groups');
-export const usersCollection = db.collection('users');
+export const groupsCollection = firestore.collection('groups');
+export const usersCollection = firestore.collection('users');
+
+export const createUserDocument = async (authUser, additionalData = {}) => {
+  if (!authUser) return;
+
+  const userRef = firestore.doc(`users/${authUser.uid}`);
+  const snapShot = await userRef.get();
+
+  if (!snapShot.exists) {
+    const { displayName, email } = authUser;
+    const createdAt = new Date(Date.now());
+
+    try {
+      await userRef.set({
+        displayName,
+        email,
+        createdAt,
+        ...additionalData
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  return userRef;
+};
 
 const googleProvider = new firebase.auth.GoogleAuthProvider();
 
