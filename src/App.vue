@@ -1,15 +1,15 @@
 <template>
   <div class="relative min-h-screen">
     <Navigation v-if="userProfile" />
-    <div :class="[userProfile ? 'px-10 py-5 md:pl-40 md:pr-10 h-full min-h-screen' : '']">
+    <div :class="[userProfile ? 'px-10 py-5 md:pl-40 md:pr-10 h-0 min-h-screen' : '']">
       <router-view />
     </div>
   </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
-import { auth } from './firebase';
+import { mapGetters, mapActions } from 'vuex';
+import { auth, createUserDocument } from './firebase';
 
 import Navigation from '@/components/Navigation';
 
@@ -18,16 +18,36 @@ export default {
   components: {
     Navigation
   },
+  data() {
+    return {
+      unsub: null
+    };
+  },
   computed: {
     ...mapGetters('firebase', ['userProfile'])
   },
+  methods: {
+    ...mapActions('firebase', ['logout', 'setUserProfile'])
+  },
   created() {
-    // without this userProfile is null when refreshing the page
-    auth.onAuthStateChanged(authUser => {
+    auth.onAuthStateChanged(async authUser => {
       if (authUser) {
-        this.$store.dispatch('firebase/fetchUserProfile', authUser);
+        try {
+          const userRef = await createUserDocument(authUser);
+
+          // await userRef.onSnapshot(snapShot => this.setUserProfile(snapShot.data()));
+          await userRef.onSnapshot(snapShot => {
+            if (snapShot.exists) {
+              this.setUserProfile(snapShot.data());
+            } else {
+              this.setUserProfile(snapShot);
+            }
+          });
+        } catch (err) {
+          console.error(err);
+        }
       } else {
-        this.$store.dispatch('firebase/setUserProfile', null);
+        this.setUserProfile(authUser);
       }
     });
   }

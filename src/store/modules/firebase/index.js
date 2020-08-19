@@ -1,22 +1,10 @@
-import { auth, signInWithGoogle, usersCollection } from '../../../firebase';
+import { auth, signInWithGoogle, usersCollection, createUserDocument } from '../../../firebase';
 import router from '../../../router';
 
 export default {
   namespaced: true,
   state: {
-    userProfile: {
-      defaultPortrait: require('@/assets/images/default-user.png'),
-      displayName: '',
-      email: '',
-      createdAt: null,
-      character: {
-        achievements: [],
-        profile: {},
-        freeCompany: {},
-        minions: [],
-        mounts: []
-      }
-    },
+    userProfile: null,
     showLoginForm: true,
     loginForm: {
       email: '',
@@ -30,108 +18,50 @@ export default {
   },
   getters: {
     userProfile: ({ userProfile }) => userProfile,
+    showLoginForm: ({ showLoginForm }) => showLoginForm,
     loginForm: ({ loginForm }) => loginForm,
-    signUpForm: ({ signUpForm }) => signUpForm,
-    showLoginForm: ({ showLoginForm }) => showLoginForm
+    signUpForm: ({ signUpForm }) => signUpForm
   },
   mutations: {
     setUserProfile: (state, val) => (state.userProfile = val),
     setShowLoginForm: (state, val) => (state.showLoginForm = val),
-    clearLoginAndSignUp: state => {
-      Object.keys(state.loginForm).forEach(key => (state.loginForm[key] = ''));
-      Object.keys(state.signUpForm).forEach(key => (state.signUpForm[key] = ''));
+    clearLoginSignUpForms: state => {
+      state.signUpForm = {
+        displayName: '',
+        email: '',
+        password: ''
+      };
+      state.loginForm = {
+        email: '',
+        password: ''
+      };
     }
   },
   actions: {
-    async setUserProfile({ commit }, user) {
+    setUserProfile({ commit }, user) {
       commit('setUserProfile', user);
     },
-    async login({ dispatch, commit }, { email, password }) {
-      try {
-        // sign user in
-        const { user } = await auth.signInWithEmailAndPassword(email, password);
-
-        commit('clearLoginAndSignUp');
-
-        // fetch user profile and set in state
-        dispatch('fetchUserProfile', user);
-      } catch (err) {
-        console.error(err);
-      }
+    dashboardRedirect({ commit }) {
+      commit('clearLoginSignUpForms');
+      router.push({ name: 'Dashboard' });
     },
-    async loginWithGoogle({ dispatch, commit }) {
-      const { user } = await signInWithGoogle();
-      const { displayName, email, uid } = user;
-
-      const userProfile = await usersCollection.doc(user.uid).get();
-
-      const googleUser = {
-        displayName,
-        email,
-        uid,
-        createdAt: new Date(Date.now())
-      };
-
-      if (!userProfile.exists) {
-        await usersCollection.doc(user.uid).set(googleUser);
-      }
-
-      dispatch('fetchUserProfile', googleUser);
-      commit('clearLoginAndSignUp');
+    async signUpWithEmailAndPassword({ dispatch }, { email, password, displayName }) {
+      await auth.createUserWithEmailAndPassword(email, password);
+      dispatch('dashboardRedirect');
     },
-    async signUp({ dispatch, commit }, { email, password, displayName }) {
-      try {
-        // sign user up
-        const { user } = await auth.createUserWithEmailAndPassword(email, password);
-        const userProfile = await usersCollection.doc(user.uid).get();
-
-        console.log('userProfile :>> ', userProfile);
-
-        if (!userProfile.exists) {
-          // add user to the db
-          await usersCollection
-            .doc(user.uid)
-            .set({ email, displayName, createdAt: new Date(Date.now()) });
-        }
-
-        commit('clearLoginAndSignUp');
-        // fetch user profile and set in state
-        dispatch('fetchUserProfile', user);
-      } catch (err) {
-        console.error(err);
-      }
+    async loginWithEmailAndPassword({ dispatch }, { email, password }) {
+      await auth.signInWithEmailAndPassword(email, password);
+      dispatch('dashboardRedirect');
     },
-    async logout({ commit }) {
-      try {
-        await auth.signOut();
-        commit('setUserProfile', null);
-
-        router.push('/login');
-      } catch (err) {
-        console.error(err);
-      }
+    async loginWithGoogle({ dispatch }) {
+      await signInWithGoogle();
+      dispatch('dashboardRedirect');
     },
-    async fetchUserProfile({ commit }, user) {
-      try {
-        if (user) {
-          // fetch user profile
-          const userProfile = await usersCollection.doc(user.uid).get();
-
-          // set user profile in state
-          commit('setUserProfile', userProfile.data());
-        } else {
-          commit('setUserProfile', null);
-        }
-
-        if (router.currentRoute.path === '/') return;
-
-        // route to dashboard
-        router.push('/');
-      } catch (err) {
-        console.error(err);
-      }
+    async logout() {
+      await auth.signOut();
+      router.push({ name: 'Login' });
     },
-    toggleForm({ commit, state }) {
+    toggleLoginForm({ commit, state }) {
       commit('setShowLoginForm', !state.showLoginForm);
     }
   }

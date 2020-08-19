@@ -1,93 +1,60 @@
 <template>
-  <div>
-    <h1>Dashboard</h1>
-    <form
-      class="grid gap-2 md:flex justify-between border rounded p-1 border-gray-500"
-      @sumbit.prevent
-    >
-      <label for="forename">
-        Forename
-        <input
-          v-model="forename"
-          id="forename"
-          class="bg-gray-200 p-1 focus:bg-white"
-        />
-      </label>
-      <label for="surname">
-        Surname
-        <input
-          v-model="surname"
-          id="surname"
-          class="bg-gray-200 p-1 focus:bg-white"
-        />
-      </label>
-      <select
-        class="bg-gray-200 p-1 focus:bg-white"
-        name="server"
-        v-model="chosenServer"
-      >
-        <option disabled value="">Server</option>
-        <optgroup
-          v-for="(dataCenter, i) in dataCenterKeys"
-          :label="dataCenter"
-          :key="i"
-          style="text-transform: capitalize;"
-        >
-          <option v-for="server in dataCenters[dataCenter]" :key="server">
-            {{ server }}
-          </option>
-        </optgroup>
-      </select>
+  <div class="h-full" v-if="userProfile">
+    <div class="flex justify-center items-center h-full" v-if="!userProfile.character">
       <button
-        type="button"
-        @click="handleOnSubmit"
-        class="bg-blue-800 text-white px-2 py-1 font-light"
+        class="bg-blue-700 hover:bg-blue-600 border border-black rounded shadow px-2 py-1 text-white font-medium text-lg focus:outline-none"
+        @click="showModal = true"
       >
-        Submit
+        Link Your FFXIV Character Data
       </button>
-    </form>
-    <div class="w-full" v-if="userProfile.character">
+    </div>
+    <div class="w-full" v-else>
       <ul class="flex flex-wrap">
         <li v-for="mount in userProfile.character.mounts" :key="mount.id">
           <img :src="mount.icon" />
         </li>
       </ul>
     </div>
+    <modal :showModal="showModal" @close="showModal = false">
+      <LinkAccountForm slot="body" />
+    </modal>
   </div>
 </template>
 
 <script>
 import { mapGetters, mapActions } from 'vuex';
 
+import LinkAccountForm from '@/components/LinkAccountForm';
+
 export default {
   name: 'Dashboard',
+  components: {
+    LinkAccountForm
+  },
   data() {
     return {
       forename: '',
       surname: '',
       chosenServer: '',
       results: [],
+      showModal: false
     };
   },
   computed: {
-    ...mapGetters('xivapi', ['dataCenters', 'dataCenterKeys']),
-    ...mapGetters('firebase', ['userProfile']),
+    ...mapGetters('firebase', ['userProfile'])
   },
   methods: {
-    ...mapActions('xivapi', [
-      'fetchDataCentersAndServers',
-      'validateCharacter',
-    ]),
+    ...mapActions('xivapi', ['fetchDataCentersAndServers', 'validateCharacter']),
     handleOnSubmit(e) {
       this.validateCharacter({
         name: `${this.forename}+${this.surname}`,
-        server: this.chosenServer,
+        server: this.chosenServer
       });
-    },
+    }
   },
   created() {
     this.fetchDataCentersAndServers();
-  },
+  }
 };
 </script>
 
