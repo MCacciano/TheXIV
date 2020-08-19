@@ -24,15 +24,18 @@
           v-model="chosenServer"
         >
           <option class="font-thin" disabled value="">Server</option>
-          <option class="font-thin" v-for="(server, i) in servers" :key="i" :value="server">
-            {{ server }}
-          </option>
+          <optgroup v-for="(dataCenter, i) in dataCenterKeys" :key="i" :label="dataCenter">
+            <option v-for="server in dataCenters[dataCenter]" :key="server.id">
+              {{ server }}
+            </option>
+          </optgroup>
         </select>
       </label>
       <div class="flex-1 px-4">
         <button
           type="button"
           @click="handleOnSubmit"
+          S
           class="bg-blue-700 hover:bg-blue-800 text-white px-2 py-1 font-normal w-full"
         >
           Submit
@@ -49,7 +52,7 @@
 
       <p class="text-lg py-1">
         <span class="font-semibold">ID:&nbsp;</span>
-        <!-- <span class="font-medium">{{ userProfile.character.linkID }}</span> -->
+        <span class="font-medium">{{ userProfile.characterLinkID }}</span>
       </p>
     </div>
   </form>
@@ -69,11 +72,11 @@ export default {
     };
   },
   computed: {
-    ...mapGetters('xivapi', ['servers']),
+    ...mapGetters('xivapi', ['dataCenters', 'dataCenterKeys']),
     ...mapGetters('firebase', ['userProfile'])
   },
   methods: {
-    ...mapActions('xivapi', ['fetchServers', 'validateCharacter']),
+    ...mapActions('xivapi', ['fetchDataCentersAndServers', 'validateCharacter']),
     handleOnSubmit(e) {
       this.validateCharacter({
         name: `${this.forename}+${this.surname}`,
@@ -82,7 +85,7 @@ export default {
     }
   },
   created() {
-    this.fetchServers();
+    this.fetchDataCentersAndServers();
   }
 };
 </script>

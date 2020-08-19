@@ -1,6 +1,7 @@
 import firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/firestore';
+import { v4 as uuidv4 } from 'uuid';
 
 const firebaseConfig = {
   apiKey: process.env.VUE_APP_FIREBASE_API_KEY,
@@ -27,7 +28,7 @@ export const createUserDocument = async (authUser, additionalData = {}) => {
   const snapShot = await userRef.get();
 
   if (!snapShot.exists) {
-    const { displayName, email } = authUser;
+    const { displayName, email, uid } = authUser;
     const createdAt = new Date(Date.now());
 
     try {
@@ -35,6 +36,8 @@ export const createUserDocument = async (authUser, additionalData = {}) => {
         displayName,
         email,
         createdAt,
+        characterLinkID: uuidv4(),
+        uid,
         ...additionalData
       });
     } catch (err) {

@@ -1,4 +1,4 @@
-import { auth, signInWithGoogle, usersCollection, createUserDocument } from '../../../firebase';
+import { auth, signInWithGoogle, createUserDocument } from '../../../firebase';
 import router from '../../../router';
 
 export default {
@@ -46,8 +46,14 @@ export default {
       router.push({ name: 'Dashboard' });
     },
     async signUpWithEmailAndPassword({ dispatch }, { email, password, displayName }) {
-      await auth.createUserWithEmailAndPassword(email, password);
-      dispatch('dashboardRedirect');
+      try {
+        const { user } = await auth.createUserWithEmailAndPassword(email, password);
+        await createUserDocument(user, { displayName });
+
+        dispatch('dashboardRedirect');
+      } catch (err) {
+        console.error(err);
+      }
     },
     async loginWithEmailAndPassword({ dispatch }, { email, password }) {
       await auth.signInWithEmailAndPassword(email, password);
