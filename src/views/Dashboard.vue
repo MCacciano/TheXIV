@@ -44,13 +44,7 @@ export default {
     ...mapGetters('firebase', ['userProfile'])
   },
   methods: {
-    ...mapActions('xivapi', ['fetchDataCentersAndServers', 'validateCharacter']),
-    handleOnSubmit(e) {
-      this.validateCharacter({
-        name: `${this.forename}+${this.surname}`,
-        server: this.chosenServer
-      });
-    }
+    ...mapActions('xivapi', ['fetchDataCentersAndServers'])
   },
   created() {
     this.fetchDataCentersAndServers();
