@@ -44,7 +44,7 @@ export default {
     ...mapGetters('firebase', ['userProfile'])
   },
   methods: {
-    ...mapActions('xivapi', ['fetchServers', 'validateCharacter']),
+    ...mapActions('xivapi', ['fetchDataCentersAndServers', 'validateCharacter']),
     handleOnSubmit(e) {
       this.validateCharacter({
         name: `${this.forename}+${this.surname}`,
@@ -53,7 +53,7 @@ export default {
     }
   },
   created() {
-    this.fetchServers();
+    this.fetchDataCentersAndServers();
   }
 };
 </script>

@@ -5,33 +5,37 @@ import { usersCollection } from '../../../firebase';
 const xiv = new XIVAPI({
   private_key: process.env.VUE_APP_XIV_API_KEY,
   language: 'en',
-  snake_case: true
+  snake_case: true,
 });
 
 export default {
   namespaced: true,
   state: {
     mounts: [],
-    servers: [],
+    dataCenters: [],
+    dataCenterKeys: [],
     character: {
       achievements: [],
       profile: {
-        portrait: require('@/assets/images/default-user.png')
+        portrait: require('@/assets/images/default-user.png'),
       },
       freeCompany: {},
       minions: [],
-      mounts: []
-    }
+      mounts: [],
+    },
   },
   getters: {
     mounts: ({ mounts }) => mounts,
-    servers: ({ servers }) => servers,
-    character: ({ character }) => character
+    dataCenters: ({ dataCenters }) => dataCenters,
+    dataCenterKeys: ({ dataCenterKeys }) => dataCenterKeys,
+    character: ({ character }) => character,
   },
   mutations: {
     setMounts: (state, mounts) => (state.mounts = mounts),
-    setServers: (state, servers) => (state.servers = servers),
-    setCharacter: (state, character) => (state.character = character)
+    setDataCenters: (state, dataCenters) => (state.dataCenters = dataCenters),
+    setDataCenterKeys: (state, dataCenterKeys) =>
+      (state.dataCenterKeys = dataCenterKeys),
+    setCharacter: (state, character) => (state.character = character),
   },
   actions: {
     async fetchMounts({ commit }) {
@@ -44,18 +48,25 @@ export default {
         console.error(err);
       }
     },
-    async fetchServers({ commit }) {
+    async fetchDataCentersAndServers({ commit }) {
       try {
-        const res = await xiv.data.servers();
+        const res = await xiv.data.datacenters();
+        const dataCenters = Object.keys(res).map(key => key);
 
-        commit('setServers', res);
+        commit('setDataCenterKeys', dataCenters);
+        commit('setDataCenters', res);
       } catch (err) {
         console.error(err);
       }
     },
-    async validateCharacter({ commit, dispatch, state, rootState }, { name, server }) {
+    async validateCharacter(
+      { commit, dispatch, state, rootState },
+      { name, server }
+    ) {
       // const cachedCharacter = localStorage.getItem('xivCharacterProfile');
-      const user = await usersCollection.doc(rootState.firebase.userProfile.uid).get();
+      const user = await usersCollection
+        .doc(rootState.firebase.userProfile.uid)
+        .get();
 
       if (user.data().character) {
         console.log('fetching character from firebase');
@@ -67,9 +78,13 @@ export default {
           const { results } = await xiv.character.search(name, { server });
           const characterId = results[0].id;
 
-          const { character: profile, mounts, ...rest } = await xiv.character.get(characterId, {
+          const {
+            character: profile,
+            mounts,
+            ...rest
+          } = await xiv.character.get(characterId, {
             extended: true,
-            data: 'AC,MIMO,CJ,FC,'
+            data: 'AC,MIMO,CJ,FC,',
           });
 
           // TODO: This is hard coded in my lodestone profile currently for testing purposes
@@ -81,14 +96,17 @@ export default {
           await usersCollection.doc(rootState.firebase.userProfile.uid).set(
             {
               character: {
-                ...characterProfile
-              }
+                ...characterProfile,
+              },
             },
             { merge: true }
           );
           dispatch(
             'firebase/setUserProfile',
-            { ...rootState.firebase.userProfile, character: { ...characterProfile } },
+            {
+              ...rootState.firebase.userProfile,
+              character: { ...characterProfile },
+            },
             { root: true }
           );
 
@@ -108,6 +126,6 @@ export default {
       } catch (err) {
         console.error(err);
       }
-    }
-  }
+    },
+  },
 };
