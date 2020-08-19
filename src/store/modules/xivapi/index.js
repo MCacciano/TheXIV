@@ -75,10 +75,7 @@ export default {
           const { results } = await xiv.character.search(name, { server });
           const characterId = results[0].id;
 
-          const { character: profile, mounts, ...rest } = await xiv.character.get(characterId, {
-            extended: true,
-            data: 'AC,MIMO,CJ,FC,'
-          });
+          const { character: profile } = await xiv.character.get(characterId);
 
           // TODO: This is hard coded in my lodestone profile currently for testing purposes
           const isValid = profile.bio === user.data().characterLinkID;
@@ -88,7 +85,12 @@ export default {
             return;
           }
 
-          const characterProfile = { profile, mounts, ...rest };
+          const extendedProfile = await xiv.character.get(characterId, {
+            extended: 1,
+            data: 'AC,MIMO,CJ,FC,'
+          });
+
+          const characterProfile = { profile, ...extendedProfile };
           await usersCollection.doc(rootState.firebase.userProfile.uid).set(
             {
               character: {
@@ -107,6 +109,7 @@ export default {
           );
 
           commit('setCharacter', characterProfile);
+          dispatch('setIsLoading', false, { root: true });
         } catch (err) {
           console.error(err);
           dispatch('setIsLoading', false, { root: true });

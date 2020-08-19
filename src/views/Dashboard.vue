@@ -15,7 +15,7 @@
         </li>
       </ul>
     </div>
-    <modal :showModal="showModal" @close="showModal = false">
+    <modal :showModal="showModal" @close="showModal = false" v-if="!userProfile.character">
       <LinkAccountForm slot="body" />
     </modal>
   </div>
