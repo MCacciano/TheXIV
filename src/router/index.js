@@ -2,6 +2,7 @@ import Vue from 'vue';
 import VueRouter from 'vue-router';
 
 import { auth } from '../firebase';
+import store from '../store';
 
 import Dashboard from '../views/Dashboard.vue';
 import Login from '../views/Login.vue';

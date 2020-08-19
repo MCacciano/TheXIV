@@ -11,6 +11,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
 import Modal from './components/Modal';
 import Spinner from './components/Spinner';
+import PreLoader from './components/PreLoader';
 
 import App from './App.vue';
 import router from './router';
@@ -25,6 +26,7 @@ library.add(faColumns, faExclamationCircle, faHorse, faIdCard, faUsers);
 Vue.component('fa-icon', FontAwesomeIcon);
 Vue.component('modal', Modal);
 Vue.component('spinner', Spinner);
+Vue.component('pre-loader', PreLoader);
 
 Vue.config.productionTip = false;
 
