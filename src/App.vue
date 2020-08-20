@@ -1,7 +1,7 @@
 <template>
   <pre-loader v-if="!$route.meta.isLoginPage && !userLoaded" />
   <transition name="user-loaded" v-else>
-    <div class="relative min-h-screen h-auto">
+    <div class="relative min-h-screen h-auto mb-16">
       <Navigation v-show="!$route.meta.isLoginPage" />
       <div :class="[userProfile ? 'px-10 py-5 mb-5 md:pl-40 md:pr-10 h-auto min-h-screen' : '']">
         <transition name="route-change">

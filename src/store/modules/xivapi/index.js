@@ -1,6 +1,6 @@
 import XIVAPI from 'xivapi-js';
 
-import { usersCollection } from '../../../firebase';
+import { usersCollection, seedAllMounts } from '../../../firebase';
 
 const xiv = new XIVAPI({
   private_key: process.env.VUE_APP_XIV_API_KEY,
@@ -11,7 +11,6 @@ const xiv = new XIVAPI({
 export default {
   namespaced: true,
   state: {
-    mounts: [],
     dataCenters: [],
     dataCenterKeys: [],
     character: {
@@ -25,28 +24,16 @@ export default {
     }
   },
   getters: {
-    mounts: ({ mounts }) => mounts,
     dataCenters: ({ dataCenters }) => dataCenters,
     dataCenterKeys: ({ dataCenterKeys }) => dataCenterKeys,
     character: ({ character }) => character
   },
   mutations: {
-    setMounts: (state, mounts) => (state.mounts = mounts),
     setDataCenters: (state, dataCenters) => (state.dataCenters = dataCenters),
     setDataCenterKeys: (state, dataCenterKeys) => (state.dataCenterKeys = dataCenterKeys),
     setCharacter: (state, character) => (state.character = character)
   },
   actions: {
-    async fetchMounts({ commit }) {
-      try {
-        const { results } = await xiv.data.list('mount', { limit: 300 });
-        const mounts = results.filter(({ name }) => name);
-
-        commit('setMounts', mounts);
-      } catch (err) {
-        console.error(err);
-      }
-    },
     async fetchDataCentersAndServers({ commit }) {
       try {
         const res = await xiv.data.datacenters();
@@ -66,7 +53,6 @@ export default {
       // ? not sure if we need this logic. validateCharacter runs on
       // ? form submit so once data is stored in firebase the form would never be used again
       if (user.data().character) {
-        console.log('fetching character from firebase');
         const characterProfile = user.data().character;
 
         commit('setCharacter', characterProfile);

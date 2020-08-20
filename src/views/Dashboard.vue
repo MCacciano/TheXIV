@@ -10,31 +10,35 @@
     </div>
     <div class="w-full" v-else>
       <div class="flex justify-between leading-snug">
-        <h1 class="flex flex-col text-2xl font-semibold">
+        <h1 class="flex flex-col md:flex-row md:items-center text-2xl font-semibold">
           <span>{{ character.profile.name }}</span>
-          <small class="text-sm md:text-base font-light font-rubik"
-            >({{ character.profile.title.name }})</small
-          >
+          <small class="text-sm md:text-base md:pt-2 md:pl-2 font-light font-rubik">
+            {{ character.profile.title.name }}
+          </small>
         </h1>
         <h2 class="text-2xl font-semibold">{{ character.profile.server }}</h2>
       </div>
       <div class="w-full h-px bg-black my-2"></div>
       <div class="mt-5">
-        <div class="my-10 border border-black rounded shadow p-2">
-          <h2 class="text-xl font-medium my-1 font-rubik">Mounts</h2>
-          <ul class="grid grid-flow-row grid-cols-8 md:grid-cols-12 gap-2">
-            <li v-for="mount in character.mounts" :key="mount.id">
-              <img :src="mount.icon" />
-            </li>
-          </ul>
-        </div>
-        <div class="my-10 border border-black rounded shadow p-2">
-          <h2 class="text-xl font-medium my-1 font-rubik">Minions</h2>
-          <ul class="grid grid-flow-row grid-cols-8 md:grid-cols-12 gap-2">
-            <li v-for="minion in character.minions" :key="minion.id">
-              <img :src="minion.icon" />
-            </li>
-          </ul>
+        <div class="flex flex-col md:flex-row items-center justify-between max-w-full">
+          <div class="flex flex-col items-center my-4">
+            <h2 class="text-xl font-medium my-1 font-rubik">Mounts</h2>
+            <PieGraph
+              :height="300"
+              :width:="300"
+              :total="allMounts"
+              :chartData="character.mounts"
+            />
+          </div>
+          <div class="flex flex-col items-center my-4">
+            <h2 class="text-xl font-medium my-1 font-rubik">Minions</h2>
+            <PieGraph
+              :height="300"
+              :width="300"
+              :total="allMinions"
+              :chartData="character.minions"
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -48,11 +52,13 @@
 import { mapGetters, mapActions } from 'vuex';
 
 import LinkAccountForm from '@/components/LinkAccountForm';
+import PieGraph from '@/components/PieGraph';
 
 export default {
   name: 'Dashboard',
   components: {
-    LinkAccountForm
+    LinkAccountForm,
+    PieGraph
   },
   data() {
     return {
@@ -64,15 +70,18 @@ export default {
     };
   },
   computed: {
-    ...mapGetters('firebase', ['userProfile']),
+    ...mapGetters('firebase', ['userProfile', 'allMounts', 'allMinions']),
     character() {
       return this.userProfile && this.userProfile.character && this.userProfile.character;
     }
   },
   methods: {
-    ...mapActions('xivapi', ['fetchDataCentersAndServers'])
+    ...mapActions('xivapi', ['fetchDataCentersAndServers']),
+    ...mapActions('firebase', ['fetchAllMounts', 'fetchAllMinions'])
   },
-  created() {
+  async created() {
+    this.fetchAllMounts();
+    this.fetchAllMinions();
     this.fetchDataCentersAndServers();
   }
 };
