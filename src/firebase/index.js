@@ -21,6 +21,28 @@ export const auth = firebase.auth();
 export const groupsCollection = firestore.collection('groups');
 export const usersCollection = firestore.collection('users');
 
+export const seedAllMounts = async (mounts = []) => {
+  if (!mounts) return;
+
+  const mountsCollection = firestore.collection('mounts');
+  const snapShot = await mountsCollection.get();
+
+  mounts.forEach(async mount => {
+    await mountsCollection.add(mount);
+  });
+};
+
+export const seedAllMinions = async (minions = []) => {
+  if (!minions) return;
+
+  const minionsCollection = firestore.collection('minions');
+  const snapShot = await minionsCollection.get();
+
+  minions.forEach(async mount => {
+    await minionsCollection.add(mount);
+  });
+};
+
 export const createUserDocument = async (authUser, additionalData = {}) => {
   if (!authUser) return;
 
